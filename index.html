@@ -48,13 +48,15 @@
   </div>
 </div>
 
-<!-- GAME VIEW PLACEHOLDER -->
+<!-- GAME VIEW -->
 <div id="gameView" style="display:none;width:100%;height:100%;background:#111;color:#0f0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif">
-  <h2>🧪 Experiment Running...</h2>
+  <canvas id="gameCanvas" width="800" height="600" style="background:#222;border:2px solid #0f0"></canvas>
   <audio id="bgm" src="https://cdn.pixabay.com/audio/2023/05/30/audio_dff3915e13.mp3" loop autoplay></audio>
 </div>
 
 <script>
+  let player = { x: 400, y: 300, size: 20, color: '#0f0' };
+
   function startGame() {
     document.getElementById("splashScreen").style.display = "none";
     document.getElementById("characterSelect").style.display = "flex";
@@ -63,15 +65,12 @@
   function chooseCharacter(type) {
     const name = document.getElementById("playerName").value || "Unknown Operative";
     const skin = document.getElementById("skinSelect").value;
-
     document.getElementById("characterSelect").style.display = "none";
-
     initGame({ character: type, codename: name, skin });
   }
 
   function updateSkinPreview() {
     const skin = document.getElementById("skinSelect").value;
-
     const skinVariants = {
       default: {
         default: "https://i.ibb.co/0X9N5hH/player.png",
@@ -94,7 +93,6 @@
         heavy: "https://i.ibb.co/k2GB9LP/player3-shadow.png"
       }
     };
-
     const variants = skinVariants[skin];
     document.getElementById("preview-default").src = variants.default;
     document.getElementById("preview-stealth").src = variants.stealth;
@@ -106,9 +104,38 @@
     document.getElementById("gameView").style.display = "flex";
     document.getElementById("bgm").play();
     alert(`Welcome Agent ${config.codename}!\nLoadout: ${config.character}, Suit: ${config.skin}`);
-    const placeholder = document.createElement('div');
-    placeholder.innerText = 'Game logic is loading...';
-    placeholder.style.marginTop = '2rem';
-    document.getElementById("gameView").appendChild(placeholder);
+    player.color = getColorFromSkin(config.skin);
+    startGameLoop();
+  }
+
+  function getColorFromSkin(skin) {
+    return {
+      default: '#0f0',
+      crimson: '#f00',
+      neon: '#0ff',
+      shadow: '#aaa'
+    }[skin] || '#0f0';
+  }
+
+  function startGameLoop() {
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    window.addEventListener("keydown", (e) => {
+      const speed = 5;
+      if (e.key === "ArrowUp") player.y -= speed;
+      if (e.key === "ArrowDown") player.y += speed;
+      if (e.key === "ArrowLeft") player.x -= speed;
+      if (e.key === "ArrowRight") player.x += speed;
+    });
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.size, player.size);
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
   }
 </script>
