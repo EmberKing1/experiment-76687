@@ -19,13 +19,31 @@
   <h2>Select Your Character</h2>
   <div style="display:flex;gap:2rem;margin-top:1rem">
     <div onclick="chooseCharacter('default')" style="cursor:pointer;text-align:center">
-      <img src="https://i.ibb.co/0X9N5hH/player.png" width="64"><br><span>Default</span>
+      <img id="preview-default" src="https://i.ibb.co/0X9N5hH/player.png" width="64"><br><span>Default</span>
+      <p style="font-size:0.9rem;margin-top:0.5rem">Balanced stats</p>
     </div>
     <div onclick="chooseCharacter('stealth')" style="cursor:pointer;text-align:center">
-      <img src="https://i.ibb.co/vD7jQcp/player2.png" width="64"><br><span>Stealth</span>
+      <img id="preview-stealth" src="https://i.ibb.co/vD7jQcp/player2.png" width="64"><br><span>Stealth</span>
+      <p style="font-size:0.9rem;margin-top:0.5rem">+Speed, -Defense</p>
     </div>
     <div onclick="chooseCharacter('heavy')" style="cursor:pointer;text-align:center">
-      <img src="https://i.ibb.co/mSzNYZm/player3.png" width="64"><br><span>Heavy</span>
+      <img id="preview-heavy" src="https://i.ibb.co/mSzNYZm/player3.png" width="64"><br><span>Heavy</span>
+      <p style="font-size:0.9rem;margin-top:0.5rem">+Defense, -Speed</p>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;text-align:center">
+    <label for="playerName">Codename:</label>
+    <input type="text" id="playerName" placeholder="Enter your name" style="margin-left:0.5rem;padding:6px;border-radius:4px;border:none;font-family:'Orbitron',sans-serif">
+
+    <div style="margin-top:1rem">
+      <label for="skinSelect">Suit Color:</label>
+      <select id="skinSelect" onchange="updateSkinPreview()" style="margin-left:0.5rem;padding:6px;border-radius:4px;font-family:'Orbitron',sans-serif">
+        <option value="default">Standard</option>
+        <option value="crimson">Crimson</option>
+        <option value="neon">Neon</option>
+        <option value="shadow">Shadow</option>
+      </select>
     </div>
   </div>
 </div>
@@ -35,6 +53,55 @@
     document.getElementById("splashScreen").style.display = "none";
     document.getElementById("characterSelect").style.display = "flex";
   }
+
+  function chooseCharacter(type) {
+    const name = document.getElementById("playerName").value || "Unknown Operative";
+    const skin = document.getElementById("skinSelect").value;
+
+    document.getElementById("characterSelect").style.display = "none";
+
+    // Example init call
+    initGame({ character: type, codename: name, skin });
+  }
+
+  function updateSkinPreview() {
+    const skin = document.getElementById("skinSelect").value;
+
+    const skinVariants = {
+      default: {
+        default: "https://i.ibb.co/0X9N5hH/player.png",
+        stealth: "https://i.ibb.co/vD7jQcp/player2.png",
+        heavy: "https://i.ibb.co/mSzNYZm/player3.png"
+      },
+      crimson: {
+        default: "https://i.ibb.co/jVxBBhW/player-crimson.png",
+        stealth: "https://i.ibb.co/Hx9s4ZG/player2-crimson.png",
+        heavy: "https://i.ibb.co/zs4RfXV/player3-crimson.png"
+      },
+      neon: {
+        default: "https://i.ibb.co/V93zpJt/player-neon.png",
+        stealth: "https://i.ibb.co/FKn6PG2/player2-neon.png",
+        heavy: "https://i.ibb.co/yYk1hBK/player3-neon.png"
+      },
+      shadow: {
+        default: "https://i.ibb.co/fCFLNDv/player-shadow.png",
+        stealth: "https://i.ibb.co/wcmMCJx/player2-shadow.png",
+        heavy: "https://i.ibb.co/k2GB9LP/player3-shadow.png"
+      }
+    };
+
+    const variants = skinVariants[skin];
+    document.getElementById("preview-default").src = variants.default;
+    document.getElementById("preview-stealth").src = variants.stealth;
+    document.getElementById("preview-heavy").src = variants.heavy;
+  }
+
+  function initGame(config) {
+    console.log("Initializing game with:", config);
+    // TODO: load HUD with codename and selected sprite based on config
+    alert(`Welcome Agent ${config.codename}!\nLoadout: ${config.character}, Suit: ${config.skin}`);
+  }
 </script>
 
 <!-- Existing game content continues here... -->
+
